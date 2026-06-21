@@ -1,0 +1,8 @@
+{
+  "name": "RYZECHo.LegacyRendering.Backup",
+  "rootNamespace": "RYZECHo",
+  "defineConstraints": [
+    "RYZECHO_LEGACY_DRAWING"
+  ],
+  "autoReferenced": true
+}

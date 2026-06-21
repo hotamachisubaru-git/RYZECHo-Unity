@@ -1,0 +1,8 @@
+{
+  "name": "RYZECHo.UI.Original",
+  "rootNamespace": "RYZECHo",
+  "defineConstraints": [
+    "RYZECHO_UI_ORIGINAL"
+  ],
+  "autoReferenced": true
+}

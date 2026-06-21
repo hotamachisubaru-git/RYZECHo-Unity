@@ -1,46 +1,26 @@
 using UnityEngine;
+using UnityColor = UnityEngine.Color;
 
-namespace RYZECHo.UI
+namespace RYZECHo.UI;
+
+[CreateAssetMenu(fileName = "GameUIConfig", menuName = "RYZECHo/UI/Game UI Config")]
+public sealed class GameUIConfig : ScriptableObject
 {
-    /// <summary>
-    /// ScriptableObject for UI visual configuration.
-    /// Edit in Inspector to control colors, font sizes, and layout constants.
-    /// </summary>
-    [CreateAssetMenu(fileName = "GameUIConfig", menuName = "RYZECHo/UI/GameUIConfig")]
-    public sealed class GameUIConfig : ScriptableObject
-    {
-        [Header("HUD Colors")]
-        public Color scoreColor = new Color(0.96f, 0.86f, 0.63f, 1f);
-        public Color turnColor = new Color(0.93f, 0.96f, 0.97f, 1f);
-        public Color timeColor = new Color(0.36f, 0.90f, 0.96f, 1f);
+    [Header("Palette")]
+    public UnityColor Background = new(0.025f, 0.04f, 0.065f, 0.97f);
+    public UnityColor Panel = new(0.055f, 0.085f, 0.12f, 0.96f);
+    public UnityColor PanelRaised = new(0.085f, 0.12f, 0.16f, 0.98f);
+    public UnityColor Border = new(0.18f, 0.27f, 0.36f, 1f);
+    public UnityColor Text = new(0.91f, 0.95f, 0.98f, 1f);
+    public UnityColor MutedText = new(0.58f, 0.68f, 0.75f, 1f);
+    public UnityColor Cyan = new(0.32f, 0.86f, 0.93f, 1f);
+    public UnityColor Gold = new(0.95f, 0.77f, 0.28f, 1f);
+    public UnityColor Green = new(0.35f, 0.86f, 0.58f, 1f);
+    public UnityColor Red = new(0.94f, 0.34f, 0.31f, 1f);
+    public UnityColor Purple = new(0.74f, 0.48f, 0.96f, 1f);
 
-        [Header("Shop Colors")]
-        public Color shopBgColor = new Color(0.06f, 0.09f, 0.12f, 0.95f);
-        public Color shopBorderColor = new Color(0.30f, 0.43f, 0.49f, 1f);
-        public Color shopTitleColor = new Color(0.88f, 0.88f, 0.94f, 1f);
-        public Color shopSelectedAccent = new Color(0.30f, 0.43f, 0.49f, 1f);
-
-        [Header("Overlay Colors")]
-        public Color pauseOverlayColor = new Color(0.01f, 0.03f, 0.06f, 0.7f);
-        public Color pauseTextColor = new Color(0.96f, 0.86f, 0.63f, 1f);
-        public Color briefingOverlayColor = new Color(0.01f, 0.03f, 0.06f, 0.85f);
-        public Color briefingTextColor = new Color(0.93f, 0.96f, 0.97f, 1f);
-
-        [Header("Font Sizes")]
-        public float hudFontSize = 18f;
-        public float shopTitleFontSize = 16f;
-        public float shopItemTitleFontSize = 10f;
-        public float shopItemSubtitleFontSize = 9f;
-        public float overlayTitleFontSize = 48f;
-        public float overlayTextFontSize = 20f;
-
-        [Header("Layout Constants")]
-        public float hudHeight = 60f;
-        public float shopPanelWidth = 320f;
-        public float shopPanelHeight = 400f;
-        public float shopCardHeight = 42f;
-        public float shopCardSpacing = 8f;
-        public float hudPaddingLeft = 20f;
-        public float hudPaddingTop = 10f;
-    }
+    [Header("Layout")]
+    [Min(960)] public int ReferenceWidth = 1440;
+    [Min(540)] public int ReferenceHeight = 810;
+    [Range(0.7f, 1.5f)] public float UiScale = 1f;
 }

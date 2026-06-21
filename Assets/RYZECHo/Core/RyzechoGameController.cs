@@ -1,7 +1,9 @@
 ﻿using RYZECHo.Audio;
+using RYZECHo.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.UIElements;
 
 namespace RYZECHo;
 
@@ -10,6 +12,10 @@ public sealed class RyzechoGameController : MonoBehaviour
     private static RyzechoGameController? _instance;
 
     private GameModel? _game;
+    private GameUIManager? _uiManager;
+    private GameUIConfig? _uiConfig;
+    private UIDocument? _uiDocument;
+    private PanelSettings? _panelSettings;
     private AudioManager? _audioManager;
     private AudioRippleSystem? _audioRipples;
 
@@ -47,6 +53,8 @@ public sealed class RyzechoGameController : MonoBehaviour
 
         _audioRipples = new AudioRippleSystem(_audioManager);
         _game.AudioCueEmitted += HandleAudioCueEmitted;
+
+        InitUI();
     }
 
     private void Update()
@@ -60,6 +68,7 @@ public sealed class RyzechoGameController : MonoBehaviour
         var mouse = Mouse.current;
         if (keyboard is null || mouse is null)
         {
+            _uiManager?.Update();
             return;
         }
 
@@ -67,6 +76,8 @@ public sealed class RyzechoGameController : MonoBehaviour
         {
             _game.IsPaused = !_game.IsPaused;
         }
+
+        _uiManager?.Update();
 
         if (_game.IsPaused)
         {
@@ -78,12 +89,14 @@ public sealed class RyzechoGameController : MonoBehaviour
             Mathf.RoundToInt(mouseValue.x),
             Mathf.RoundToInt(Screen.height - mouseValue.y));
 
-        if (mouse.leftButton.wasPressedThisFrame)
+        var pointerOverUi = _uiManager?.IsPointerOverInteractiveElement(mouseValue) ?? false;
+
+        if (mouse.leftButton.wasPressedThisFrame && !pointerOverUi)
         {
             _game.HandleLeftClick(mousePosition);
         }
 
-        if (mouse.rightButton.wasPressedThisFrame)
+        if (mouse.rightButton.wasPressedThisFrame && !pointerOverUi)
         {
             _game.HandleRightClick(mousePosition);
         }
@@ -121,6 +134,7 @@ public sealed class RyzechoGameController : MonoBehaviour
             mousePosition);
 
         _game.Update(Mathf.Clamp(Time.deltaTime, 0.001f, 0.05f), input);
+        _uiManager?.Update();
     }
 
     private void OnDestroy()
@@ -129,6 +143,22 @@ public sealed class RyzechoGameController : MonoBehaviour
         {
             _game.AudioCueEmitted -= HandleAudioCueEmitted;
         }
+
+        _uiManager?.Dispose();
+        _uiManager = null;
+
+        if (_uiConfig != null)
+        {
+            Destroy(_uiConfig);
+        }
+        _uiConfig = null;
+
+        if (_panelSettings != null)
+        {
+            Destroy(_panelSettings);
+        }
+        _panelSettings = null;
+        _uiDocument = null;
 
         _audioManager?.Dispose();
         _audioManager = null;
@@ -157,7 +187,35 @@ public sealed class RyzechoGameController : MonoBehaviour
         _audioRipples.Play(kind, strength * attenuation, pan);
     }
 
-    public GameModel GetGameModel() => _game;
+    private void InitUI()
+    {
+        _uiConfig = ScriptableObject.CreateInstance<GameUIConfig>();
+        _uiConfig.name = "Runtime Game UI Config";
+
+        _uiDocument = FindAnyObjectByType<UIDocument>();
+        if (_uiDocument == null)
+        {
+            var uidocGO = new GameObject("RYZECHo Game UI");
+            _uiDocument = uidocGO.AddComponent<UIDocument>();
+            DontDestroyOnLoad(uidocGO);
+        }
+
+        if (_uiDocument.panelSettings == null)
+        {
+            _panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+            _panelSettings.name = "Runtime Game UI Panel Settings";
+            _panelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
+            _panelSettings.referenceResolution = new Vector2Int(_uiConfig.ReferenceWidth, _uiConfig.ReferenceHeight);
+            _panelSettings.match = 0.5f;
+            _uiDocument.panelSettings = _panelSettings;
+        }
+
+        var view = new GameUI(_uiDocument, _uiConfig);
+        _uiManager = new GameUIManager(_game, view);
+        _uiManager.Update();
+    }
+
+    internal GameModel? GetGameModel() => _game;
 
     private static bool NumberPressed(KeyControl topRow, KeyControl numberPad) =>
         topRow.wasPressedThisFrame || numberPad.wasPressedThisFrame;

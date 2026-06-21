@@ -1,48 +1,35 @@
-using UnityEngine;
-using UnityEngine.UIElements;
+using UnityColor = UnityEngine.Color;
 
 namespace RYZECHo.UI
 {
     /// <summary>
-    /// System.Drawing.Color → UnityEngine.Color 変換ヘルパー
+    /// System.Drawing.Color → UnityEngine.Color 変換ヘルパー。
+    /// 既存の描画ロジックで使われている RGB 値をそのまま Unity カラーに変換する。
     /// </summary>
-    public static class ColorAdapter
+    internal static class ColorAdapter
     {
-        /// <summary>
-        /// ARGB (int) を UnityEngine.Color に変換
-        /// </summary>
-        public static Color FromArgb(int argb)
+        /// <summary>0-255 の RGB を Unity カラーに変換 (Alpha=255)</summary>
+        public static UnityColor ToUnity(int r, int g, int b)
         {
-            return new Color(
-                (argb >> 16 & 0xFF) / 255f,
-                (argb >> 8 & 0xFF) / 255f,
-                (argb & 0xFF) / 255f,
-                (argb >> 24 & 0xFF) / 255f);
+            return new UnityColor(r / 255f, g / 255f, b / 255f, 1f);
         }
 
-        /// <summary>
-        /// RGB (int) + alpha を UnityEngine.Color に変換
-        /// </summary>
-        public static Color FromArgb(int rgb, int alpha)
+        /// <summary>0-255 の RGBA を Unity カラーに変換</summary>
+        public static UnityColor ToUnity(int r, int g, int b, int a)
         {
-            return new Color(
-                (rgb >> 16 & 0xFF) / 255f,
-                (rgb >> 8 & 0xFF) / 255f,
-                (rgb & 0xFF) / 255f,
-                alpha / 255f);
+            return new UnityColor(r / 255f, g / 255f, b / 255f, a / 255f);
         }
 
-        /// <summary>
-        /// Color (System.Drawing) → UnityEngine.Color (int overload)
-        /// </summary>
-        public static Color ToColor(int argb) => FromArgb(argb);
-
-        /// <summary>
-        /// Color (System.Drawing) → UnityEngine.Color (float overload)
-        /// </summary>
-        public static Color ToColor(float r, float g, float b, float a)
+        /// <summary>0-1 の RGB を Unity カラーに変換</summary>
+        public static UnityColor ToUnity(float r, float g, float b)
         {
-            return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+            return new UnityColor(r, g, b, 1f);
+        }
+
+        /// <summary>0-1 の RGBA を Unity カラーに変換</summary>
+        public static UnityColor ToUnity(float r, float g, float b, float a)
+        {
+            return new UnityColor(r, g, b, a);
         }
     }
 }
