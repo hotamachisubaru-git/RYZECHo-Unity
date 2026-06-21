@@ -40,6 +40,7 @@
 !/[Aa]ssets/**/*.cs
 !/[Aa]ssets/**/*.asmdef
 !/[Aa]ssets/**/*.asmref
+!/[Aa]ssets/csc.rsp
 
 # Synaptic AI Pro
 /[Aa]ssets/Synaptic AI Pro/

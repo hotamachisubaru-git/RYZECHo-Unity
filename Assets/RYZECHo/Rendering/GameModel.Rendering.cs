@@ -1,4 +1,4 @@
-namespace RYZECHo;
+﻿namespace RYZECHo;
 
 internal sealed partial class GameModel
 {
@@ -10,18 +10,6 @@ internal sealed partial class GameModel
         graphics.FillRectangle(background, clientBounds);
         using var vignette = new LinearGradientBrush(clientBounds, Color.FromArgb(0, 86, 229, 247), Color.FromArgb(26, 20, 54, 84), 22f);
         graphics.FillRectangle(vignette, clientBounds);
-        using var gridPen = new Pen(Color.FromArgb(18, 34, 52), 0.6f);
-        var gridSize = 40f;
-        var startX = (clientBounds.X / gridSize) * gridSize;
-        var startY = (clientBounds.Y / gridSize) * gridSize;
-        for (var x = startX; x < clientBounds.Right; x += gridSize)
-        {
-            graphics.DrawLine(gridPen, x, clientBounds.Top, x, clientBounds.Bottom);
-        }
-        for (var y = startY; y < clientBounds.Bottom; y += gridSize)
-        {
-            graphics.DrawLine(gridPen, clientBounds.Left, y, clientBounds.Right, y);
-        }
 
         if (_phase != GamePhase.Hunt || !_player.IsAlive)
         {
@@ -60,7 +48,7 @@ internal sealed partial class GameModel
     private void DrawWorldDropShadow(Graphics graphics)
     {
         var corners = GetProjectedWorldCorners();
-        var shadow = corners.Select(point => new PointF(point.X + 18f, point.Y + 20f)).ToArray();
+        var shadow = corners.Select(point => new Vector2(point.X + 18f, point.Y + 20f)).ToArray();
         using var shadowBrush = new SolidBrush(Color.FromArgb(64, 0, 0, 0));
         graphics.FillPolygon(shadowBrush, shadow);
     }
